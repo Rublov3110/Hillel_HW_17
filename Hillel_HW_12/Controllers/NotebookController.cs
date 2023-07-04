@@ -23,10 +23,10 @@ namespace Hillel_HW_12
         }
 
 
-        [HttpPut("{id}"/*"{name}"*/)]
-        public ActionResult PutMyFamiliar([FromRoute] int id/*[FromRoute] string name, [FromRoute] string surname*/, [FromBody] UpdateMyFamiliarRequest updatedMyFamiliar)
+        [HttpPut("{name}/{surname}")]
+        public ActionResult PutMyFamiliar([FromRoute] string name, [FromRoute] string surname, [FromBody] UpdateMyFamiliarRequest updatedMyFamiliar)
         {
-            var person = myFamiliarRegister.PutMyFamiliar(id/*name, surname*/, updatedMyFamiliar);
+            var person = myFamiliarRegister.PutMyFamiliar(name, surname, updatedMyFamiliar);
             if (person == null)
             {
                 return NotFound(person);
@@ -41,13 +41,13 @@ namespace Hillel_HW_12
         [HttpGet]
         public ActionResult GetMyFamiliar()
         {
-            return Ok(myFamiliarRegister.GetMyFamiliar);
+            return Ok(myFamiliarRegister.GetMyFamiliar());
         }
 
-        [HttpGet("{id}"/*"{name}"*/)]
-        public IActionResult GetMyFamiliarName(int id/*[FromRoute] string name, [FromRoute] string surname*/)
+        [HttpGet("{name}/{surname}")]
+        public IActionResult GetMyFamiliarName([FromRoute] string name, [FromRoute] string surname)
         {
-            var person = myFamiliarRegister.GetMyFamiliarName(id/*name, surname*/);
+            var person = myFamiliarRegister.GetMyFamiliarName(name, surname);
             if (person == null)
             {
                 return NotFound(person);
@@ -58,10 +58,10 @@ namespace Hillel_HW_12
             }
         }
 
-        [HttpDelete]
-        public ActionResult DeletMyFamiliar([FromRoute] int id/*[FromRoute] string name, [FromRoute] string surname*/)
+        [HttpDelete("{name}/{surname}")]
+        public ActionResult DeletMyFamiliar([FromRoute] string name, [FromRoute] string surname)
         {
-            var answer = myFamiliarRegister.DeletMyFamiliar(/*name, surname*/id);
+            var answer = myFamiliarRegister.DeletMyFamiliar(name, surname);
 
             if (answer == false)
             {

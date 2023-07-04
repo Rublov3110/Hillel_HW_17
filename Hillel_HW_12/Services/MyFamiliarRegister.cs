@@ -24,9 +24,9 @@ namespace Hillel_HW_12
             return true;
         }
 
-        public IMyFamiliar? PutMyFamiliar(int id/*string name, string surname*/, UpdateMyFamiliarRequest updatedMyFamiliar)
+        public IMyFamiliar? PutMyFamiliar(string name, string surname, UpdateMyFamiliarRequest updatedMyFamiliar)
         {
-            var person = MyFamiliar.Find(x => x.ID == id/*x => x.Name == name && x.Surname == surname*/);
+            var person = MyFamiliar.Find(x => x.Name == name && x.Surname == surname);
             if (person == null)
             {
                 return person;
@@ -46,14 +46,14 @@ namespace Hillel_HW_12
             return MyFamiliar;
         }
 
-        public IMyFamiliar? GetMyFamiliarName(int id/*string name, string surname*/) 
+        public IMyFamiliar? GetMyFamiliarName(string name, string surname) 
         {  
-            return MyFamiliar.FirstOrDefault(x => x.ID == id/*x => x.Name == name && x.Surname == surname*/);    
+            return MyFamiliar.FirstOrDefault(x => x.Name == name && x.Surname == surname);    
         }
 
-        public bool DeletMyFamiliar(int id/*string name, string surname*/)
+        public bool DeletMyFamiliar(string name, string surname)
         {
-            var a = MyFamiliar.FirstOrDefault(x => x.ID == id/*x => x.Name == name && x.Surname == surname*/);
+            var a = MyFamiliar.FirstOrDefault(x => x.Name == name && x.Surname == surname);
              return MyFamiliar.Remove(a);
 
         }
