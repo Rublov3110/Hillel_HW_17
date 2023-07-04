@@ -10,7 +10,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<IMyFamiliarRegister, MyFamiliarRegister>();
-builder.Services.AddTransient<ILoaderService, LoaderService>();
 
 var app = builder.Build();
 

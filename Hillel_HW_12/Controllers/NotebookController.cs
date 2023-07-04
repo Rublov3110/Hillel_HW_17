@@ -1,67 +1,38 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Win32;
 using System;
 
 namespace Hillel_HW_12
 {
     [ApiController]
     [Route("[controller]")]
-    public class MyFamiliarSailController : Controller
-    {
-       private readonly ILoaderService loaderService;
-       private readonly IMyFamiliarRegister myFamiliarRegister;
-       
-        public MyFamiliarSailController ( ILoaderService loaderService, IMyFamiliarRegister register )
-        {
-            this.loaderService = loaderService;
-            this.myFamiliarRegister = register;
-        }
-
-    }
-    [ApiController]
-    [Route("[controller]")]
     public class NotebookController : ControllerBase
     {
-        private readonly IMyFamiliarRegister familiarRegister; 
-        public NotebookController( IMyFamiliarRegister familiarRegister)
-        {
-            this.familiarRegister = familiarRegister;
-        }
+        private readonly IMyFamiliarRegister myFamiliarRegister;
 
-        //public static List<MyFamiliar> MyFamiliarList { get; set; } = new List<MyFamiliar> { };
+        public NotebookController(IMyFamiliarRegister familiarRegister)
+        {
+            this.myFamiliarRegister = familiarRegister;
+        }
 
         [HttpPost]
-        public ActionResult AddMyFamiliar([FromBody] MyFamiliar myFamiliar)
+        public ActionResult AddMyFamiliar([FromBody] CreateMyFamiliarRequest myFamiliar)
         {
-            //var myFamiliar = new MyFamiliar
-            //{
-            //    ID = familiarRegister.Count,
-            //    Avatarka = request.Avatarka,
-            //    Name = request.Name,
-            //    Surname = request.Surname,
-            //    Age = request.Age,
-            //    Number = request.Number,
-            //    Sity = request.Sity,
-            //    Description = request.Description,
-            //};
-            familiarRegister.AddMyFamiliar(myFamiliar);
-            return Ok(myFamiliar);
+            bool answer = myFamiliarRegister.AddMyFamiliar(myFamiliar);
+            return Ok(answer);
         }
 
-        [HttpPut("{name}")]
-        public ActionResult Put([FromRoute] string name, [FromRoute] string surname, [FromBody] UpdateMyFamiliarRequest updatedMyFamiliar)
+
+        [HttpPut("{id}"/*"{name}"*/)]
+        public ActionResult PutMyFamiliar([FromRoute] int id/*[FromRoute] string name, [FromRoute] string surname*/, [FromBody] UpdateMyFamiliarRequest updatedMyFamiliar)
         {
-            var person = MyFamiliarList.Find(x => x.Name == name && x.Surname == surname);
+            var person = myFamiliarRegister.PutMyFamiliar(id/*name, surname*/, updatedMyFamiliar);
             if (person == null)
             {
                 return NotFound(person);
             }
             else
             {
-                person.Avatarka = updatedMyFamiliar.Avatarka;
-                person.Age = updatedMyFamiliar.Age;
-                person.Number = updatedMyFamiliar.Number;
-                person.Sity = updatedMyFamiliar.Sity;
-                person.Description = updatedMyFamiliar.Description;
                 return Ok(person);
             }
 
@@ -70,13 +41,13 @@ namespace Hillel_HW_12
         [HttpGet]
         public ActionResult GetMyFamiliar()
         {
-            return Ok(MyFamiliarList);
+            return Ok(myFamiliarRegister.GetMyFamiliar);
         }
 
-        [HttpGet("{name}")]
-        public IActionResult GetMyFamiliar([FromRoute] string name, [FromRoute] string surname)
+        [HttpGet("{id}"/*"{name}"*/)]
+        public IActionResult GetMyFamiliarName(int id/*[FromRoute] string name, [FromRoute] string surname*/)
         {
-            var person = MyFamiliarList.FirstOrDefault(x => x.Name == name && x.Surname == surname);
+            var person = myFamiliarRegister.GetMyFamiliarName(id/*name, surname*/);
             if (person == null)
             {
                 return NotFound(person);
@@ -88,20 +59,20 @@ namespace Hillel_HW_12
         }
 
         [HttpDelete]
-        public ActionResult DeletMyFamiliar([FromRoute] string name, [FromRoute] string surname)
+        public ActionResult DeletMyFamiliar([FromRoute] int id/*[FromRoute] string name, [FromRoute] string surname*/)
         {
-            var myFamiliarList = MyFamiliarList.FirstOrDefault(x => x.Name == name && x.Surname == surname);
-            if (myFamiliarList == null)
-            { 
-                return BadRequest(new {ErrorMassage = "wrong ID "}); 
+            var answer = myFamiliarRegister.DeletMyFamiliar(/*name, surname*/id);
+
+            if (answer == false)
+            {
+                return BadRequest(new { ErrorMassage = "wrong ID " });
             }
             else
             {
-                MyFamiliarList.Remove(myFamiliarList);
-                return Ok(myFamiliarList);
+                return Ok(answer);
             }
 
         }
-
     }
+
 }

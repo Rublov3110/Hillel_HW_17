@@ -2,9 +2,12 @@
 {
     public interface IMyFamiliarRegister
     {
-        void AddMyFamiliar(IMyFamiliar myFamiliar);
+        bool AddMyFamiliar(CreateMyFamiliarRequest request);
+        public IMyFamiliar? PutMyFamiliar(int id/*string name, string surname*/, UpdateMyFamiliarRequest updatedMyFamiliar);
+        public List<IMyFamiliar?> GetMyFamiliar();
+        public IMyFamiliar? GetMyFamiliarName(int id/*string name, string surname*/);
+        public bool DeletMyFamiliar(int id/*string name, string surname*/);
 
-        IMyFamiliar GetMyFamiliar(string name);
- 
+
     }
 }
