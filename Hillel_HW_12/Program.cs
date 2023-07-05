@@ -1,9 +1,10 @@
 using Hillel_HW_12;
-using Microsoft.AspNetCore.OpenApi;
+//using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddTransient<TimeService>();
 
 builder.Services.AddSingleton<IMyFamiliarRegister, MyFamiliarRegister>();
 
@@ -28,19 +30,27 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.UseMiddleware<TimerMiddleware>();
+app.Use(async (context, next) =>
+{
+    Console.WriteLine($"Before {context.Request.Path}");
+    await next();
+    Console.WriteLine($"After {context.Request.Path}");
+});
 
 app.MapControllers();
-app.MapGet("/v2/myFamiliar/{name}/{surname}",
-    (HttpContext requestDelegate) =>
-    {
-        var name = requestDelegate.GetRouteValue("name")!.ToString()!;
-        var surname = requestDelegate.GetRouteValue("surname")!.ToString()!;
-        var service = requestDelegate.RequestServices.GetService<IMyFamiliarRegister>()!;
-        var myFamiliar = service.GetMyFamiliarName(name, surname);
-        if (myFamiliar == null) return Results.NoContent();
-        return Results.Ok(myFamiliar);
-    })
-    .WithName("Test")
-    .WithOpenApi();
+//app.MapGet("/v2/myFamiliar/{name}/{surname}",
+//    (HttpContext requestDelegate) =>
+//    {
+//        var name = requestDelegate.GetRouteValue("name")!.ToString()!;
+//        var surname = requestDelegate.GetRouteValue("surname")!.ToString()!;
+//        var service = requestDelegate.RequestServices.GetService<IMyFamiliarRegister>()!;
+//        var myFamiliar = service.GetMyFamiliarName(name, surname);
+//        if (myFamiliar == null) return Results.NoContent();
+//        return Results.Ok(myFamiliar);
+//    })
+//    .WithName("Test")
+//    .WithOpenApi();
 
 app.Run();
+

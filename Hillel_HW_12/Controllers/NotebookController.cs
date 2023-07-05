@@ -16,6 +16,7 @@ namespace Hillel_HW_12
         }
 
         [HttpPost]
+        [LogFilter]
         public ActionResult AddMyFamiliar([FromBody] CreateMyFamiliarRequest myFamiliar)
         {
             bool answer = myFamiliarRegister.AddMyFamiliar(myFamiliar);
