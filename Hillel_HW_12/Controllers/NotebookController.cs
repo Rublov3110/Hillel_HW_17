@@ -17,7 +17,7 @@ namespace Hillel_HW_12
 
         [HttpPost]
         [LogFilter]
-        public ActionResult AddMyFamiliar([FromBody] CreateMyFamiliarRequest myFamiliar)
+        public ActionResult AddMyFamiliar([FromBody] MyFamiliar myFamiliar)
         {
             bool answer = myFamiliarRegister.AddMyFamiliar(myFamiliar);
             return Ok(answer);
@@ -25,9 +25,9 @@ namespace Hillel_HW_12
 
 
         [HttpPut("{name}/{surname}")]
-        public ActionResult PutMyFamiliar([FromRoute] string name, [FromRoute] string surname, [FromBody] UpdateMyFamiliarRequest updatedMyFamiliar)
+        public ActionResult PutMyFamiliar([FromRoute] string name, [FromRoute] string surname, [FromBody] UpdateMyFamiliarRequest myFamiliar)
         {
-            var person = myFamiliarRegister.PutMyFamiliar(name, surname, updatedMyFamiliar);
+            var person = myFamiliarRegister.PutMyFamiliar(name, surname, myFamiliar);
             if (person == null)
             {
                 return NotFound(person);

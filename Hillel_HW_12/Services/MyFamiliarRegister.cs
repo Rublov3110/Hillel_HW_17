@@ -1,60 +1,65 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Mvc;
 using System.Xml.Linq;
 
 namespace Hillel_HW_12
 {
     public class MyFamiliarRegister: IMyFamiliarRegister
     {
-        private List<IMyFamiliar> MyFamiliar { get; set; }  = new List<IMyFamiliar>();
-
-        public bool AddMyFamiliar(CreateMyFamiliarRequest request)
+        public ApplicationContext DbContext { get; }
+        public MyFamiliarRegister(ApplicationContext dbContext)
         {
-            var myFamiliar = new MyFamiliar
-            {
-                ID = MyFamiliar.Count,
-                Avatarka = request.Avatarka,
-                Name = request.Name,
-                Surname = request.Surname,
-                Age = request.Age,
-                Number = request.Number,
-                Sity = request.Sity,
-                Description = request.Description,
-            };
-            MyFamiliar.Add(myFamiliar);
+            DbContext = dbContext;
+        }
+        public bool AddMyFamiliar(IMyFamiliar myFamiliar)
+        {
+
+            DbContext.MyFamiliars.Add((MyFamiliar)myFamiliar);
+            DbContext.SaveChanges();
             return true;
         }
 
-        public IMyFamiliar? PutMyFamiliar(string name, string surname, UpdateMyFamiliarRequest updatedMyFamiliar)
+        public IMyFamiliar? PutMyFamiliar(string name, string surname, UpdateMyFamiliarRequest myFamiliar)
         {
-            var person = MyFamiliar.Find(x => x.Name == name && x.Surname == surname);
+            var person = DbContext.MyFamiliars.FirstOrDefault(x => x.Name == name && x.Surname == surname);
             if (person == null)
             {
                 return person;
             }
             else
             {
-                person.Avatarka = updatedMyFamiliar.Avatarka;
-                person.Age = updatedMyFamiliar.Age;
-                person.Number = updatedMyFamiliar.Number;
-                person.Sity = updatedMyFamiliar.Sity;
-                person.Description = updatedMyFamiliar.Description;
+                person.Avatarka = myFamiliar.Avatarka;
+                person.Age = myFamiliar.Age;
+                person.Number = myFamiliar.Number;
+                person.Sity = myFamiliar.Sity;
+                person.Description = myFamiliar.Description;
+                DbContext.MyFamiliars.Update(person);
+                DbContext.SaveChanges();
                 return person;
             }
         }
         public List<IMyFamiliar?> GetMyFamiliar()
         {
-            return MyFamiliar;
+            var all = DbContext.MyFamiliars.ToList();
+            var convertedAll = all.Cast<IMyFamiliar?>().ToList();
+            return convertedAll;
         }
 
         public IMyFamiliar? GetMyFamiliarName(string name, string surname) 
         {  
-            return MyFamiliar.FirstOrDefault(x => x.Name == name && x.Surname == surname);    
+            return DbContext.MyFamiliars.FirstOrDefault(x => x.Name == name && x.Surname == surname);    
         }
 
         public bool DeletMyFamiliar(string name, string surname)
         {
-            var a = MyFamiliar.FirstOrDefault(x => x.Name == name && x.Surname == surname);
-             return MyFamiliar.Remove(a);
+            var a = DbContext.MyFamiliars.FirstOrDefault(x => x.Name == name && x.Surname == surname);
+            if (a != null)
+            {
+                DbContext.MyFamiliars.Remove(a);
+                DbContext.SaveChanges();
+                return true;
+            }
+             return false;
 
         }
     }
