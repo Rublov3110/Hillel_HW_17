@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Xml.Linq;
 
 namespace Hillel_HW_12
@@ -11,7 +12,7 @@ namespace Hillel_HW_12
         {
             DbContext = dbContext;
         }
-        public bool AddMyFamiliar(IMyFamiliar myFamiliar)
+        public bool AddMyFamiliar(MyFamiliar myFamiliar)
         {
 
             DbContext.MyFamiliars.Add((MyFamiliar)myFamiliar);
@@ -19,7 +20,7 @@ namespace Hillel_HW_12
             return true;
         }
 
-        public IMyFamiliar? PutMyFamiliar(string name, string surname, UpdateMyFamiliarRequest myFamiliar)
+        public MyFamiliar? PutMyFamiliar(string name, string surname, UpdateMyFamiliarRequest myFamiliar)
         {
             var person = DbContext.MyFamiliars.FirstOrDefault(x => x.Name == name && x.Surname == surname);
             if (person == null)
@@ -38,16 +39,19 @@ namespace Hillel_HW_12
                 return person;
             }
         }
-        public List<IMyFamiliar?> GetMyFamiliar()
+        public List<MyFamiliar?> GetMyFamiliar()
         {
-            var all = DbContext.MyFamiliars.ToList();
-            var convertedAll = all.Cast<IMyFamiliar?>().ToList();
+            var all = DbContext.MyFamiliars.Include(x => x.Status).ToList();
+            var convertedAll = all.Cast<MyFamiliar?>().ToList();
             return convertedAll;
         }
 
-        public IMyFamiliar? GetMyFamiliarName(string name, string surname) 
-        {  
-            return DbContext.MyFamiliars.FirstOrDefault(x => x.Name == name && x.Surname == surname);    
+        public MyFamiliar? GetMyFamiliarName(string name, string surname) 
+        {
+            return DbContext.MyFamiliars
+                .Include(x => x.Status)
+                .FirstOrDefault(x => x.Name == name && x.Surname == surname);
+                   
         }
 
         public bool DeletMyFamiliar(string name, string surname)

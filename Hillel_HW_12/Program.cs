@@ -5,14 +5,17 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationContext>(options =>
 {
-    //options.UseSqlServer("Server=.\\SQLExpress;Trusted_Connection=Yes;Integrated Security=true;TrustServerCertificate=True");
-    options.UseSqlite("Data Source=helloapp.db");
+    options.UseSqlServer("Server=.\\SQLExpress;Data Source=DESKTOP-5P8T1L1;Initial Catalog=MyFamiliarDatabase;Trusted_Connection=Yes;Integrated Security=true;TrustServerCertificate=True");
+    //options.UseSqlite("Data Source=helloapp.db");
 });
 
 builder.Services.AddControllers();
