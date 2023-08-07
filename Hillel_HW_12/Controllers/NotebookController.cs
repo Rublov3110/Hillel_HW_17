@@ -8,18 +8,20 @@ namespace Hillel_HW_12
     [Route("[controller]")]
     public class NotebookController : ControllerBase
     {
+        private readonly ILogger<NotebookController> logger;
         private readonly IMyFamiliarRegister myFamiliarRegister;
 
-        public NotebookController(IMyFamiliarRegister familiarRegister)
+        public NotebookController(IMyFamiliarRegister familiarRegister, ILogger<NotebookController> logger)
         {
             this.myFamiliarRegister = familiarRegister;
+            this.logger = logger;
         }
 
         [HttpPost]
-        [LogFilter]
         public ActionResult AddMyFamiliar([FromBody] MyFamiliar myFamiliar)
         {
             bool answer = myFamiliarRegister.AddMyFamiliar(myFamiliar);
+            logger.LogInformation($"Inform");
             return Ok(answer);
         }
 
@@ -66,6 +68,7 @@ namespace Hillel_HW_12
 
             if (answer == false)
             {
+                logger.LogWarning("wrong Id");
                 return BadRequest(new { ErrorMassage = "wrong ID " });
             }
             else

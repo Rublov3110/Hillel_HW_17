@@ -6,10 +6,22 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Serilog;
 
-
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File(System.IO.Path.Combine(Directory.GetCurrentDirectory(), "logs", "diagnostics.txt"),
+       rollingInterval: RollingInterval.Day,
+       fileSizeLimitBytes: 10 * 1024 * 1024,
+       retainedFileCountLimit: 2,
+       rollOnFileSizeLimit: true,
+       shared: true,
+       flushToDiskInterval: TimeSpan.FromSeconds(1))
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog();
 
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationContext>(options =>

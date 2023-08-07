@@ -4,20 +4,19 @@ namespace Hillel_HW_12
 {
     public class LogFilter : Attribute, IActionFilter
     {
+        public LogFilter(ILogger<LogFilter> logger)
+        {
+            Logger = logger;
+        }
+        public ILogger<LogFilter> Logger { get; }
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            string failePathe = "D:/C#/Hillel/Hillel_HW_17/Log.txt";
-            string content = "Write: " + DateTime.Now + ": " + context.HttpContext.Request.Path;
-            Console.WriteLine($"Writ {DateTime.Now} {context.HttpContext.Request.Path}");
-            using (StreamWriter sw = new StreamWriter(failePathe, true))
-            {
-                sw.WriteLine(content);
-            }
+            Logger.LogTrace($"v2 After {context.HttpContext.Request.Path}");
         }
         public void OnActionExecuted(ActionExecutedContext context)
         {
 
-            Console.WriteLine($"v2 After {context.HttpContext.Request.Path}");
+            Logger.LogTrace($"v2 Before {context.HttpContext.Request.Path}");
         }
     }
 }
