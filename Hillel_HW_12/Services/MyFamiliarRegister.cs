@@ -57,8 +57,11 @@ namespace Hillel_HW_12
         public bool DeletMyFamiliar(string name, string surname)
         {
             var a = DbContext.MyFamiliars.FirstOrDefault(x => x.Name == name && x.Surname == surname);
+            
             if (a != null)
             {
+                var b = DbContext.Status.FirstOrDefault(x => x.MyFamiliarId == a.ID);
+                DbContext.Status.Remove(b);
                 DbContext.MyFamiliars.Remove(a);
                 DbContext.SaveChanges();
                 return true;

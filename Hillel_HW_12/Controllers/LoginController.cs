@@ -37,6 +37,8 @@ namespace Hillel_HW_12
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.NameIdentifier, request.Login),
+                    new Claim(ClaimTypes.Role, "User"),
+                    new Claim(ClaimTypes.Role, "Admin"),
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 Issuer = myIssuer,

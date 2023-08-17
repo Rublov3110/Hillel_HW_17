@@ -10,10 +10,12 @@ namespace Hillel_HW_12
         public ApplicationContext(DbContextOptions options) : base(options)
          => Database.EnsureCreated();
 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new MyFamiliarConfiguration());
             modelBuilder.ApplyConfiguration(new StatusConfiguration());
+
         }
     }
 }

@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32;
 using System;
 
@@ -18,6 +20,7 @@ namespace Hillel_HW_12
         }
 
         [HttpPost]
+        [Authorize(Roles = "User")]
         public ActionResult AddMyFamiliar([FromBody] MyFamiliar myFamiliar)
         {
             bool answer = myFamiliarRegister.AddMyFamiliar(myFamiliar);
@@ -48,6 +51,7 @@ namespace Hillel_HW_12
         }
 
         [HttpGet("{name}/{surname}")]
+        [Authorize(Roles = "User")]
         public IActionResult GetMyFamiliarName([FromRoute] string name, [FromRoute] string surname)
         {
             var person = myFamiliarRegister.GetMyFamiliarName(name, surname);
@@ -62,6 +66,7 @@ namespace Hillel_HW_12
         }
 
         [HttpDelete("{name}/{surname}")]
+        [Authorize(Roles = "Admin")]
         public ActionResult DeletMyFamiliar([FromRoute] string name, [FromRoute] string surname)
         {
             var answer = myFamiliarRegister.DeletMyFamiliar(name, surname);
@@ -75,7 +80,7 @@ namespace Hillel_HW_12
             {
                 return Ok(answer);
             }
-
+  
         }
     }
 
