@@ -12,20 +12,30 @@ namespace Hillel_HW_12
     {
         private readonly ILogger<NotebookController> logger;
         private readonly IMyFamiliarRegister myFamiliarRegister;
+        private ValidFachen ValidFachen;
 
         public NotebookController(IMyFamiliarRegister familiarRegister, ILogger<NotebookController> logger)
         {
             this.myFamiliarRegister = familiarRegister;
             this.logger = logger;
+            ValidFachen = new ValidFachen();
         }
 
         [HttpPost]
         [Authorize(Roles = "User")]
         public ActionResult AddMyFamiliar([FromBody] MyFamiliar myFamiliar)
         {
-            bool answer = myFamiliarRegister.AddMyFamiliar(myFamiliar);
-            logger.LogInformation($"Inform");
-            return Ok(answer);
+            bool valid = ValidFachen.ModelValid(myFamiliar);
+            if (valid)
+            {
+                bool answer = myFamiliarRegister.AddMyFamiliar(myFamiliar);
+                logger.LogInformation($"Inform");
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("Incorrect value");
+            }
         }
 
 
@@ -54,33 +64,49 @@ namespace Hillel_HW_12
         [Authorize(Roles = "User")]
         public IActionResult GetMyFamiliarName([FromRoute] string name, [FromRoute] string surname)
         {
-            var person = myFamiliarRegister.GetMyFamiliarName(name, surname);
-            if (person == null)
+            bool valid = ValidFachen.IsValidName(name, surname);
+            if (valid)
             {
-                return NotFound(person);
+                var person = myFamiliarRegister.GetMyFamiliarName(name, surname);
+                if (person == null)
+                {
+                    return NotFound(person);
+                }
+                else
+                {
+                    return Ok(person);
+                }
             }
-            else
+            else 
             {
-                return Ok(person);
+                return BadRequest("Incorrect value");
             }
         }
 
         [HttpDelete("{name}/{surname}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "User")]
         public ActionResult DeletMyFamiliar([FromRoute] string name, [FromRoute] string surname)
         {
-            var answer = myFamiliarRegister.DeletMyFamiliar(name, surname);
-
-            if (answer == false)
+            bool valid = ValidFachen.IsValidName(name, surname);
+            if (valid)
             {
-                logger.LogWarning("wrong Id");
-                return BadRequest(new { ErrorMassage = "wrong ID " });
+                var answer = myFamiliarRegister.DeletMyFamiliar(name, surname);
+
+                if (answer == false)
+                {
+                    logger.LogWarning("wrong Name");
+                    return BadRequest(new { ErrorMassage = "wrong Name " });
+                }
+                else
+                {
+                    return Ok(answer);
+                }
             }
             else
             {
-                return Ok(answer);
+                return BadRequest("Incorrect value");
             }
-  
+
         }
     }
 
